@@ -13,6 +13,7 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <openssl/aes.h>   
 
 //server port is a unique identifier that the socket will be bound to
 //as I understand it there are ~65k ports but ports below 1024 are reserved
@@ -20,6 +21,16 @@
 
 //buffer size is the number of bytes that will be read in per call of the read or write command
 #define BUF_SIZE 4096
+
+
+//defining a 128 byte key
+static const unsigned char key[] = {
+  0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+  0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff,
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
+};
+
 
 //fatal is a function used for desplaying error messages 
 void fatal(char *string);
@@ -32,12 +43,17 @@ int main(int argc, char **argv) {
 
   //buff is a string used for displaying info from the recived file
   char buf[BUF_SIZE];
-
+  char decryptBuf[BUF_SIZE];
   //h will store information about the host
   struct hostent *h;
 
   //and channel will hold information about the port and IP address 
   struct sockaddr_in channel;
+
+
+  AES_KEY wctx;
+
+  AES_set_decrypt_key(key, 128, &wctx);
 
   //a check to makes sure that the user provided the correct number of args
   if (argc != 3)
@@ -69,14 +85,31 @@ int main(int argc, char **argv) {
   //gets the specified file
   write(s, argv[2], strlen(argv[2]) + 1);
 
+  FILE *outputfile = fopen("outputfile.txt", "wb"); // Open output file in binary write mode
 
- FILE *outputfile = fopen("outputfile.txt", "wb"); // Open output file in binary write mode
   if (!outputfile)
     fatal("failed to open output file");
 
+  FILE *outputfileEncrypted = fopen("outputfileencrypted.txt", "wb"); // Open output file in binary write mode
+  if (!outputfileEncrypted)
+    fatal("failed to open output file");
+
+  /*
   while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
-    fwrite(buf, sizeof(char), bytes, outputfile); // Write received data to the file
+    fwrite(buf, sizeof(char), bytes, outputfileEncrypted); // Write received data to the file
+    //decrypt the file
+    AES_decrypt(buf, decryptBuf, &wctx);
+    fwrite(decryptBuf,sizeof(char),bytes,outputfile);
   }
+  */
+
+  while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
+        // Decrypt the received data
+        char decryptBuf[BUF_SIZE];
+        AES_decrypt(buf, decryptBuf, &wctx);
+        fwrite(decryptBuf, sizeof(char), bytes, outputfileEncrypted);
+  }
+
 
   fclose(outputfile);
   close(s);
