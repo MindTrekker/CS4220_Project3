@@ -12,12 +12,16 @@
 #include <openssl/aes.h>   
 
 //this was the pid of the first server I ran. 
-#define SERVER_PORT 28157
+#define SERVER_PORT 20423
 #define BUF_SIZE 4096
 #define QUEUE_SIZE 10
 
 //set up the 
 static const unsigned char key[] = {
+  0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
+  0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff,
+  0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+  0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f,
   0x00, 0x11, 0x22, 0x33, 0x44, 0x55, 0x66, 0x77,
   0x88, 0x99, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff,
   0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
@@ -39,11 +43,12 @@ int main(int argc, char *argv[]) {
   int s, b, l, fd, sa, bytes, on = 1;
   char buff[BUF_SIZE];
   char encryptedSend[BUF_SIZE];
+  char encryptSubstring[16];
   struct sockaddr_in channel;
 
 
   AES_KEY wctx;
-  AES_set_encrypt_key(key, 128, &wctx);
+  AES_set_encrypt_key(key, 256, &wctx);
   
   // build address structure to bind to socket, initially similar to client
   //but this time we are not coppying the information as we are the host
@@ -86,11 +91,19 @@ int main(int argc, char *argv[]) {
     if (fd < 0)
       fatal("open failed");
 
+    printf("\nEntering the read loop");
     while (1) {
+
+      printf("\nReading from file");
       bytes = read(fd, buff, BUF_SIZE);
 
+      printf("\nDecrypting...");
       AES_encrypt(buff, encryptedSend, &wctx);  
 
+      printf("Length of the encrypted string: %d", strlen(encryptedSend));
+      printf("\nAfter decryption");
+
+      printf("\nContents of encryptedSend: %s", encryptedSend);
       if (bytes <= 0)
         break;
       
