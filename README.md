@@ -1,28 +1,28 @@
 # CS4220_Project3
-Contributors: Grayson Mckenzie, Issac Laffely
+Contributors: Grayson Mckenzie, Isaac Laffely
 
-This program was developed to send text over a TCP connection securely by having it be encrypted before being sent and decrypted upon arrival with the intended destination. This particular program uses a symmetric key system where encryption and decrytion are done with the same key.
+This program was developed to send text over a TCP connection securely by having it be encrypted with AES256 before being sent and decrypted upon arrival with the intended destination. This particular program uses a symmetric key system where encryption and decrytion are done with the same key.
 
 Build instructions:
 
-    For testing purposes, server.c and client.c should be kept in the same directory
+For testing purposes, server.c and client.c should be kept in the same directory
 
-    Make sure to include library args:
+Make sure to include library args:
     ```gcc -o aesServer server.c -lssl -lcrypto```
     ```gcc -o aesClient client.c -lssl -lcrypto```
 
 Running:
 
-    Server: 
-        ```./aesServer``` 
-        [NO ARGS]
-        The server must be closed manually with ```ctrl-c```.
+Server: 
+    ```./aesServer``` 
+    [NO ARGS]
+    The server must be closed manually with ```ctrl-c```.
 
 
-    Client:
-        ```./aesClient localhost <filename>```
-        The client side will close automaticly when done.
-        The file used in ```<filename>``` must be in the same directory as the compiled server file.
+Client:
+    ```./aesClient localhost <filename>```
+    The client side will close automaticly when done.
+    The file used in ```<filename>``` must be in the same directory as the compiled server file.
 
 Issues:
 
