@@ -54,7 +54,7 @@ int main(int argc, char **argv) {
   //buff is a string used for displaying info from the recived file
   char buf[BUF_SIZE];
   char decryptBuf[BUF_SIZE];
-  char decryptedSubstring[SUBSTRING_LENGTH + 1]
+  char decryptedSubstring[SUBSTRING_LENGTH + 1];
   char substrings[MAX_SUBSTRINGS][SUBSTRING_LENGTH + 1];
   //h will store information about the host
   struct hostent *h;
@@ -135,7 +135,7 @@ int main(int argc, char **argv) {
         AES_decrypt(substrings[i], decryptedSubstring, &wctx);
         
         //debug
-          fwrite(substring[i],sizeof(char),SUBSTRING_LENGTH, outputfileEncrypted);
+          fwrite(substrings[i],sizeof(char),SUBSTRING_LENGTH, outputfileEncrypted);
         //
         fwrite(decryptedSubstring, sizeof(char), SUBSTRING_LENGTH, outputfile);
   }
