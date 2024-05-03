@@ -106,7 +106,7 @@ int main(int argc, char *argv[]) {
       //clear the 2d array 
 
       memset(substrings, 0, sizeof(substrings));
-
+      memset(encryptedSend,0,sizeof(encryptedSend));
       //break into substrings here
       numStrings = createSubstrings(buff, substrings);
 
@@ -153,8 +153,8 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
         printf("Error: Exceeded maximum number of substrings\n");
         return 1;
     }
-    int i;
-    for (i = 0; i < numSubstrings; i++) {
+    
+    for (int i = 0; i < numSubstrings; i++) {
         strncpy(substrings[i], &buf[i * SUBSTRING_LENGTH], SUBSTRING_LENGTH);
         substrings[i][SUBSTRING_LENGTH] = '\0'; // Null-terminate the substring
     }
@@ -168,13 +168,13 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
         while (strlen(substrings[numSubstrings]) < SUBSTRING_LENGTH) {
           substrings[numSubstrings][strlen(substrings[numSubstrings])] = ' ';
         }
-        substrings[numSubstrings][SUBSTRING_LENGTH  - 1]= ' ';
+        substrings[numSubstrings][SUBSTRING_LENGTH  - 1]= '.';
         substrings[numSubstrings][SUBSTRING_LENGTH]= '\0';
         numSubstrings++;
     }
 
     printf("Substrings:\n");
-    for (i = 0; i < numSubstrings; i++) {
+    for (int i = 0; i < numSubstrings; i++) {
         printf("%s\n", substrings[i]);
     }
 

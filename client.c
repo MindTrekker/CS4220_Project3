@@ -97,8 +97,7 @@ int main(int argc, char **argv) {
   //gets the specified file
   write(s, argv[2], strlen(argv[2]) + 1);
 
-  FILE *outputfile = fopen("outputfile.txt", "wb"); // Open output file in binary write mode
-
+  FILE *outputfile = fopen("outputfile.txt", "w"); // Open output file in binary write mode
   if (!outputfile)
     fatal("failed to open output file");
 
@@ -107,6 +106,7 @@ int main(int argc, char **argv) {
     fatal("failed to open output file");
 
   memset(buf,0,sizeof(buf));
+  memset(decryptBuf,0,sizeof(decryptBuf));
 
   while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
 
