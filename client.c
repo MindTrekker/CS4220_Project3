@@ -135,6 +135,8 @@ int main(int argc, char **argv) {
         printf("\nDecrypting...");
         AES_decrypt(substrings[i], decryptedSubstring, &wctx);
         
+        decryptedSubstring[SUBSTRING_LENGTH] = '\0';
+
         strcat(decrypString,decryptedSubstring);
   }
 
