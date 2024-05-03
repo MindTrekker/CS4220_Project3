@@ -103,9 +103,7 @@ int main(int argc, char *argv[]) {
       bytes = read(fd, buff, BUF_SIZE);
 
       while (strlen(buff) % 16 != 0) {
-        int place = strlen(buff);
-        buff[place] = ' ';
-        buff[place + 1] = '\0';
+        strcat(buff," ");
       }
       //clear the 2d array 
 
