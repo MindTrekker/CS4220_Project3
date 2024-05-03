@@ -122,14 +122,9 @@ int main(int argc, char *argv[]) {
 
         //add the substring to the encrypted send string to be sent
         strcat(encryptedSend,encryptedSubstring);
-
-
-        printf("\nAfter decryption");
-
-        printf("\nContents of encryptedSend: %s", encryptedSend);
-
       }
        
+      printf("\nContents of encryptedSend: %s", encryptedSend);
 
     
       
@@ -168,7 +163,19 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
     if (length % SUBSTRING_LENGTH != 0) {
         strncpy(substrings[numSubstrings], &buf[numSubstrings * SUBSTRING_LENGTH], length % SUBSTRING_LENGTH);
         substrings[numSubstrings][length % SUBSTRING_LENGTH] = '\0'; // Null-terminate the last substring
+
+        //pad out the last substring with spaces 
+        while (strlen(substrings[numSubstrings]) < SUBSTRING_LENGTH) {
+          substrings[numSubstrings][strlen(substrings[numSubstrings])] = ' ';
+        }
+        substrings[numSubstrings][SUBSTRING_LENGTH  - 1]= ' ';
+        substrings[numSubstrings][SUBSTRING_LENGTH]= '\0';
         numSubstrings++;
+    }
+
+    printf("Substrings:\n");
+    for (i = 0; i < numSubstrings; i++) {
+        printf("%s\n", substrings[i]);
     }
 
     return numSubstrings;

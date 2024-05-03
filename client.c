@@ -106,40 +106,38 @@ int main(int argc, char **argv) {
   if (!outputfileEncrypted)
     fatal("failed to open output file");
 
-  /*
+  memset(buf,0,sizeof(buf));
+
   while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
-    fwrite(buf, sizeof(char), bytes, outputfileEncrypted); // Write received data to the file
-    //decrypt the file
-    AES_decrypt(buf, decryptBuf, &wctx);
-    fwrite(decryptBuf,sizeof(char),bytes,outputfile);
+
+    printf("Size of data recived: %d\n",bytes);
+    //clear the 2d array 
+    memset(substrings, 0, sizeof(substrings));
+    
+
+
+    //break buf up into substrings
+    numStrings = createSubstrings(buf,substrings);
+
+    //loop through the array of substrings
+    for (int i = 0; i < numStrings; i++){
+      
+      //decrypt the string and cat them together
+      AES_decrypt(substrings[i], decryptedSubstring, &wctx);
+      printf("\ndecrypted substring: %s",decryptedSubstring);
+      strcat(decryptBuf,decryptedSubstring);
+    }
+
+    printf("\nDecrypted buffer string: %s\n",decryptBuf);
+    // Write received data to the file
+    fwrite(buf, sizeof(char), bytes, outputfileEncrypted); 
+    
+    //write the decrypted data to a file
+    fwrite(decryptBuf, sizeof(char), bytes,outputfile);
   }
-  */
+  
 
-  /*while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
-        // Decrypt the received data
-        char decryptBuf[BUF_SIZE];
-        AES_decrypt(buf, decryptBuf, &wctx);
-        fwrite(decryptBuf, sizeof(char), bytes, outputfile);
-        fwrite(buf,sizeof(char),bytes, outputfileEncrypted);
-  }*/
-
-  memset(substrings, '\0', sizeof(substrings));
-
-  //break into substrings here
-  numStrings = createSubstrings(buf, substrings);
-
-  char decrypString[BUF_SIZE];
-  memset(decrypString, '\0', sizeof(decrypString));
-
-  bytes = read(s, buf, BUF_SIZE);
-
-  for (i = 0; i < numStrings; i++) {
-    char decryptedSubstring[SUBSTRING_LENGTH + 1];
-    AES_decrypt(substrings[i], decryptedSubstring, &wctx);
-    fwrite(decryptedSubstring, sizeof(char), strlen(decryptedSubstring), outputfile);
-    fwrite(substrings[i], sizeof(char), strlen(substrings[i]), outputfileEncrypted);
-  }
-
+ 
   fclose(outputfileEncrypted);
   fclose(outputfile);
   close(s);
