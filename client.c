@@ -22,6 +22,9 @@
 //buffer size is the number of bytes that will be read in per call of the read or write command
 #define BUF_SIZE 4096
 
+#define SUBSTRING_LENGTH 16   
+#define MAX_SUBSTRINGS (BUF_SIZE / SUBSTRING_LENGTH) 
+
 
 //defining a 128 byte key
 static const unsigned char key[] = {
@@ -35,19 +38,24 @@ static const unsigned char key[] = {
   0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f
 };
 
+///Headers///
+int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]);
 
 //fatal is a function used for desplaying error messages 
 void fatal(char *string);
 
+///Main///
 int main(int argc, char **argv) {
 
   //ints for various purposes, bytes is used to read in data
   //s is the socket, and c represents the connection status
-  int c, s, bytes;
+  int c, s, bytes, i, numStrings;
 
   //buff is a string used for displaying info from the recived file
   char buf[BUF_SIZE];
   char decryptBuf[BUF_SIZE];
+  char decryptedSubstring[SUBSTRING_LENGTH + 1]
+  char substrings[MAX_SUBSTRINGS][SUBSTRING_LENGTH + 1];
   //h will store information about the host
   struct hostent *h;
 
@@ -107,17 +115,66 @@ int main(int argc, char **argv) {
   }
   */
 
-  while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
+  /*while ((bytes = read(s, buf, BUF_SIZE)) > 0) {
         // Decrypt the received data
         char decryptBuf[BUF_SIZE];
         AES_decrypt(buf, decryptBuf, &wctx);
         fwrite(decryptBuf, sizeof(char), bytes, outputfile);
         fwrite(buf,sizeof(char),bytes, outputfileEncrypted);
+  }*/
+
+  memset(substrings, 0, sizeof(substrings));
+
+  //break into substrings here
+  numStrings = createSubstrings(buf, substrings);
+
+
+  for (int i = 0; i < numStrings; i++){
+    //decrypt the substring
+        printf("\nDecrypting...");
+        AES_decrypt(substrings[i], decryptedSubstring, &wctx);
+        
+        //debug
+          fwrite(substring[i],sizeof(char),SUBSTRING_LENGTH, outputfileEncrypted);
+        //
+        fwrite(decryptedSubstring, sizeof(char), SUBSTRING_LENGTH, outputfile);
   }
 
-
+  fclose(outputfileEncrypted);
   fclose(outputfile);
   close(s);
+}
+
+int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
+  int length = strlen(buf);
+    int numSubstrings = length / SUBSTRING_LENGTH;
+
+    // Ensure there's space in the array to store all substrings
+    if (numSubstrings > MAX_SUBSTRINGS) {
+        printf("Error: Exceeded maximum number of substrings\n");
+        return 1;
+    }
+
+    int i;
+    for (i = 0; i < numSubstrings; i++) {
+        strncpy(substrings[i], &buf[i * SUBSTRING_LENGTH], SUBSTRING_LENGTH);
+        substrings[i][SUBSTRING_LENGTH] = '\0'; // Null-terminate the substring
+    }
+
+    // If there's a leftover part of the string less than 16 characters, store it as the last substring
+    if (length % SUBSTRING_LENGTH != 0) {
+        strncpy(substrings[numSubstrings], &buf[numSubstrings * SUBSTRING_LENGTH], length % SUBSTRING_LENGTH);
+        substrings[numSubstrings][length % SUBSTRING_LENGTH] = '\0'; // Null-terminate the last substring
+        numSubstrings++;
+    }
+
+    // Printing the substrings for demonstration
+    printf("Substrings:\n");
+    for (i = 0; i < numSubstrings; i++) {
+        printf("%s\n", substrings[i]);
+    }
+
+    return numSubstrings;
 }
 
 //prints a message to console and stops the program with code 1
