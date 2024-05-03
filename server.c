@@ -102,7 +102,11 @@ int main(int argc, char *argv[]) {
       printf("\nReading from file");
       bytes = read(fd, buff, BUF_SIZE);
 
-
+      while (strlen(buff) % 16 != 0) {
+        int place = strlen(buff);
+        buff[place] = ' ';
+        buff[place + 1] = '\0';
+      }
       //clear the 2d array 
 
       memset(substrings, 0, sizeof(substrings));
@@ -163,8 +167,8 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
     if (length % SUBSTRING_LENGTH != 0) {
         strncpy(substrings[numSubstrings], &buf[numSubstrings * SUBSTRING_LENGTH], length % SUBSTRING_LENGTH);
 
-        for (int i = 0; i + (length % SUBSTRING_LENGTH) < SUBSTRING_LENGTH; i ++) {
-          substrings[numSubstrings][(length % SUBSTRING_LENGTH) + i] = ' ';
+        for (int i = 0; i + (length % SUBSTRING_LENGTH) < SUBSTRING_LENGTH + 1; i ++) {
+          substrings[numSubstrings][(length % SUBSTRING_LENGTH) + i] = '.';
         }
          
         substrings[numSubstrings][SUBSTRING_LENGTH]= '\0';
