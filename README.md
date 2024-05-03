@@ -1,6 +1,8 @@
 # CS4220_Project3
 Contributors: Grayson Mckenzie, Isaac Laffely
 
+We have neither given nor received unauthorized assistance on this work;
+
 This program was developed to send text over a TCP connection securely by having it be encrypted with AES256 before being sent and decrypted upon arrival with the intended destination. This particular program uses a symmetric key system where encryption and decrytion are done with the same key.
 
 Build instructions:
