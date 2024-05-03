@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
   //sa checks if the server can accept a socket connection
   //fd checks if the file can be opened
   //and on is set to one to be used in opening the socket
-  int s, b, l, fd, sa, bytes, numStrings, on = 1;
+  int s, b, l, fd, sa, bytes, numStrings, on = 1, i;
   char buff[BUF_SIZE];
   char encryptedSend[BUF_SIZE];
   char encryptedSubstring[SUBSTRING_LENGTH + 1];
@@ -111,7 +111,7 @@ int main(int argc, char *argv[]) {
       numStrings = createSubstrings(buff, substrings);
 
 
-      for (int i = 0; i < numStrings; i++){
+      for (i = 0; i < numStrings; i++){
 
         //encrypt the substring
         printf("\nEncrypting...");
@@ -158,8 +158,8 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
         printf("Error: Exceeded maximum number of substrings\n");
         return 1;
     }
-
-    for (int i = 0; i < numSubstrings; i++) {
+    int i;
+    for (i = 0; i < numSubstrings; i++) {
         strncpy(substrings[i], &buf[i * SUBSTRING_LENGTH], SUBSTRING_LENGTH);
         substrings[i][SUBSTRING_LENGTH] = '\0'; // Null-terminate the substring
     }

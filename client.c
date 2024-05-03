@@ -130,7 +130,9 @@ int main(int argc, char **argv) {
 
   char decrypString[BUF_SIZE];
   memset(decrypString, '\0', sizeof(decrypString));
-  for (int i = 0; i < numStrings; i++){
+
+  bytes = read(s, buf, BUF_SIZE);
+  for (i = 0; i < numStrings; i++){
     //decrypt the substring
         printf("\nDecrypting...");
         AES_decrypt(substrings[i], decryptedSubstring, &wctx);
