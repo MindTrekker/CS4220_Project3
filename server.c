@@ -15,6 +15,9 @@
 #define SERVER_PORT 20423
 #define BUF_SIZE 4096
 #define QUEUE_SIZE 10
+#define SUBSTRING_LENGTH 16   
+#define MAX_SUBSTRINGS (BUF_SIZE / SUBSTRING_LENGTH) 
+
 
 //set up the 
 static const unsigned char key[] = {
@@ -30,6 +33,7 @@ static const unsigned char key[] = {
 
 //same as client 
 void fatal(char *string);
+int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]);
 
 int main(int argc, char *argv[]) {
 
@@ -40,10 +44,11 @@ int main(int argc, char *argv[]) {
   //sa checks if the server can accept a socket connection
   //fd checks if the file can be opened
   //and on is set to one to be used in opening the socket
-  int s, b, l, fd, sa, bytes, on = 1;
+  int s, b, l, fd, sa, bytes, numStrings, on = 1;
   char buff[BUF_SIZE];
   char encryptedSend[BUF_SIZE];
-  char encryptSubstring[16];
+  char encryptedSubstring[SUBSTRING_LENGTH + 1];
+  char substrings[MAX_SUBSTRINGS][SUBSTRING_LENGTH + 1];
   struct sockaddr_in channel;
 
 
@@ -97,13 +102,37 @@ int main(int argc, char *argv[]) {
       printf("\nReading from file");
       bytes = read(fd, buff, BUF_SIZE);
 
-      printf("\nDecrypting...");
-      AES_encrypt(buff, encryptedSend, &wctx);  
 
-      printf("Length of the encrypted string: %d", strlen(encryptedSend));
-      printf("\nAfter decryption");
+      //clear the 2d array 
 
-      printf("\nContents of encryptedSend: %s", encryptedSend);
+      memset(substrings, 0, sizeof(substrings));
+
+      //break into substrings here
+      numStrings = createSubstrings(buff, substrings);
+
+
+      for (int i = 0; i < numStrings; i++){
+
+        //encrypt the substring
+        printf("\nEncrypting...");
+        AES_encrypt(substrings[i], encryptedSubstring, &wctx);
+        
+        //make sure the substring is well terminated
+        encryptedSubstring[SUBSTRING_LENGTH] = '\0';
+
+        //add the substring to the encrypted send string to be sent
+        strcat(encryptedSend,encryptedSubstring);
+
+
+        printf("\nAfter decryption");
+
+        printf("\nContents of encryptedSend: %s", encryptedSend);
+
+      }
+       
+
+    
+      
       if (bytes <= 0)
         break;
       
@@ -118,4 +147,36 @@ int main(int argc, char *argv[]) {
 void fatal(char *string) {
   printf("%s\n", string);
   exit(1);
+}
+
+int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
+  int length = strlen(buf);
+    int numSubstrings = length / SUBSTRING_LENGTH;
+
+    // Ensure there's space in the array to store all substrings
+    if (numSubstrings > MAX_SUBSTRINGS) {
+        printf("Error: Exceeded maximum number of substrings\n");
+        return 1;
+    }
+
+    int i;
+    for (i = 0; i < numSubstrings; i++) {
+        strncpy(substrings[i], &buf[i * SUBSTRING_LENGTH], SUBSTRING_LENGTH);
+        substrings[i][SUBSTRING_LENGTH] = '\0'; // Null-terminate the substring
+    }
+
+    // If there's a leftover part of the string less than 16 characters, store it as the last substring
+    if (length % SUBSTRING_LENGTH != 0) {
+        strncpy(substrings[numSubstrings], &buf[numSubstrings * SUBSTRING_LENGTH], length % SUBSTRING_LENGTH);
+        substrings[numSubstrings][length % SUBSTRING_LENGTH] = '\0'; // Null-terminate the last substring
+        numSubstrings++;
+    }
+
+    // Printing the substrings for demonstration
+    printf("Substrings:\n");
+    for (i = 0; i < numSubstrings; i++) {
+        printf("%s\n", substrings[i]);
+    }
+
+    return numSubstrings;
 }
