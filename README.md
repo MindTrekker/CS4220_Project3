@@ -20,7 +20,7 @@ Running:
     Client:
         ```./aesClient localhost <filename>```
         The client side will close automaticly when done.
-        The file used in ```<filename>``` must be in the same directory as the compiled client file.
+        The file used in ```<filename>``` must be in the same directory as the compiled server file.
 
 Issues:
 
