@@ -162,13 +162,11 @@ int createSubstrings(char buf[], char substrings [][SUBSTRING_LENGTH + 1]) {
     // If there's a leftover part of the string less than 16 characters, store it as the last substring
     if (length % SUBSTRING_LENGTH != 0) {
         strncpy(substrings[numSubstrings], &buf[numSubstrings * SUBSTRING_LENGTH], length % SUBSTRING_LENGTH);
-        substrings[numSubstrings][length % SUBSTRING_LENGTH] = '\0'; // Null-terminate the last substring
 
-        //pad out the last substring with spaces 
-        while (strlen(substrings[numSubstrings]) < SUBSTRING_LENGTH) {
-          substrings[numSubstrings][strlen(substrings[numSubstrings])] = ' ';
+        for (int i = 0; i + (length % SUBSTRING_LENGTH) < SUBSTRING_LENGTH; i ++) {
+          substrings[numSubstrings][(length % SUBSTRING_LENGTH) + i] = ' ';
         }
-        substrings[numSubstrings][SUBSTRING_LENGTH  - 1]= '.';
+         
         substrings[numSubstrings][SUBSTRING_LENGTH]= '\0';
         numSubstrings++;
     }
