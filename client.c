@@ -123,22 +123,25 @@ int main(int argc, char **argv) {
         fwrite(buf,sizeof(char),bytes, outputfileEncrypted);
   }*/
 
-  memset(substrings, 0, sizeof(substrings));
+  memset(substrings, '\0', sizeof(substrings));
 
   //break into substrings here
   numStrings = createSubstrings(buf, substrings);
 
-
+  char decrypString[BUF_SIZE];
+  memset(decrypString, '\0', sizeof(decrypString));
   for (int i = 0; i < numStrings; i++){
     //decrypt the substring
         printf("\nDecrypting...");
         AES_decrypt(substrings[i], decryptedSubstring, &wctx);
         
-        //debug
-          fwrite(substrings[i],sizeof(char),SUBSTRING_LENGTH, outputfileEncrypted);
-        //
-        fwrite(decryptedSubstring, sizeof(char), SUBSTRING_LENGTH, outputfile);
+        strcat(decrypString,decryptedSubstring);
   }
+
+  //debug
+    fwrite(buf,sizeof(char),strlen(buf), outputfileEncrypted);
+  //
+  fwrite(decrypString, sizeof(char), strlen(decrypString), outputfile);
 
   fclose(outputfileEncrypted);
   fclose(outputfile);
