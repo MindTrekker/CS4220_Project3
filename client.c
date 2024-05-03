@@ -130,10 +130,10 @@ int main(int argc, char **argv) {
 
     printf("\nDecrypted buffer string: %s\n",decryptBuf);
     // Write received data to the file
-    fwrite(buf, sizeof(char), bytes, outputfileEncrypted); 
-    
+    fprintf(outputfile, "%s",decryptBuf);
+    fprintf(outputfileEncrypted, "%s",buf);
     //write the decrypted data to a file
-    fwrite(decryptBuf, sizeof(char), bytes,outputfile);
+
   }
   
 
